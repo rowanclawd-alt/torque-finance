@@ -1,0 +1,7 @@
+export const STRATEGY_WALLETS: Record<string, string> = {
+  "jaaa-loop": "0x92631A25FdeD3bBD954b8Ab181b7C85f5D87Fd54",
+  "acrdx-loop": "0x7e76eeB1F3C0FEa2Ee10fA02a92D56aC86bf882a",
+  "jtrsy-stable": "0x26CE410aedc707154E4D5641845E1176FA38B316",
+  "spxa-momentum": "0x0118c777b74C062d89e124332A91103AE2752402",
+  "spxa-short": "0xf5B38C5321FFA5eEDbad9259DFE165E172080178"
+};
