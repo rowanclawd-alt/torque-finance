@@ -11,9 +11,9 @@ export default function AppPage() {
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link to="/" className="text-2xl font-bold gradient-text">TORQUE</Link>
           <div className="hidden md:flex items-center gap-8 text-gray-400">
-            <Link to="/app" className="text-white">Vaults</Link>
+            <Link to="/app" className="text-white">Strategies</Link>
             <a href="#" className="hover:text-white transition">Portfolio</a>
-            <a href="#" className="hover:text-white transition">Docs</a>
+            <a href="https://docs.centrifuge.io" target="_blank" rel="noopener" className="hover:text-white transition">Docs</a>
           </div>
           <ConnectButton />
         </div>
@@ -38,7 +38,7 @@ export default function AppPage() {
               transition={{ delay: 0.1 }}
               className="glass rounded-xl p-6"
             >
-              <div className="text-sm text-gray-500 uppercase tracking-wider mb-1">Active Vaults</div>
+              <div className="text-sm text-gray-500 uppercase tracking-wider mb-1">Active Strategies</div>
               <div className="text-3xl font-bold">{vaults.length}</div>
             </motion.div>
             <motion.div
@@ -47,30 +47,31 @@ export default function AppPage() {
               transition={{ delay: 0.2 }}
               className="glass rounded-xl p-6"
             >
-              <div className="text-sm text-gray-500 uppercase tracking-wider mb-1">Average APY</div>
+              <div className="text-sm text-gray-500 uppercase tracking-wider mb-1">Avg Boosted APY</div>
               <div className="text-3xl font-bold gradient-text">{avgAPY.toFixed(1)}%</div>
             </motion.div>
           </div>
 
-          {/* Vaults Header */}
+          {/* Strategies Header */}
           <div className="flex items-center justify-between mb-6">
-            <h1 className="text-2xl font-bold">Vaults</h1>
+            <h1 className="text-2xl font-bold">Strategies</h1>
             <div className="flex items-center gap-4">
               <select className="bg-surface border border-white/10 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-accent">
                 <option>All Chains</option>
                 <option>Ethereum</option>
                 <option>Base</option>
-                <option>Arbitrum</option>
               </select>
               <select className="bg-surface border border-white/10 rounded-lg px-4 py-2 text-sm focus:outline-none focus:border-accent">
                 <option>All Assets</option>
-                <option>USDC</option>
-                <option>ETH</option>
+                <option>JAAA</option>
+                <option>ACRDX</option>
+                <option>JTRSY</option>
+                <option>SPXA</option>
               </select>
             </div>
           </div>
 
-          {/* Vault List */}
+          {/* Strategy List */}
           <div className="space-y-4">
             {vaults.map((vault, i) => (
               <motion.div
@@ -84,24 +85,31 @@ export default function AppPage() {
                   className="block glass rounded-xl p-6 hover:border-accent/50 transition group"
                 >
                   <div className="flex items-center justify-between">
-                    {/* Left: Vault Info */}
+                    {/* Left: Strategy Info */}
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold text-lg">
-                        {vault.asset[0]}
+                      <div className="w-14 h-14 rounded-full bg-gradient-to-br from-accent/30 to-amber-600/30 flex items-center justify-center font-bold">
+                        {vault.underlying}
                       </div>
                       <div>
                         <h3 className="text-lg font-semibold group-hover:text-accent transition">
                           {vault.name}
                         </h3>
                         <p className="text-sm text-gray-500">{vault.strategy}</p>
+                        <div className="flex gap-2 mt-2">
+                          {vault.protocols.map((protocol, idx) => (
+                            <span key={protocol} className="text-xs bg-white/5 px-2 py-0.5 rounded">
+                              {vault.protocolLogos[idx]} {protocol}
+                            </span>
+                          ))}
+                        </div>
                       </div>
                     </div>
 
                     {/* Middle: Details */}
-                    <div className="hidden md:flex items-center gap-12">
+                    <div className="hidden lg:flex items-center gap-12">
                       <div>
-                        <div className="text-xs text-gray-500 uppercase">Chain</div>
-                        <div className="text-sm font-medium">{vault.chain}</div>
+                        <div className="text-xs text-gray-500 uppercase">Leverage</div>
+                        <div className="text-sm font-medium">{vault.leverage}</div>
                       </div>
                       <div>
                         <div className="text-xs text-gray-500 uppercase">Risk</div>
@@ -117,13 +125,18 @@ export default function AppPage() {
                         <div className="text-xs text-gray-500 uppercase">TVL</div>
                         <div className="text-sm font-medium">{formatTVL(vault.tvl)}</div>
                       </div>
+                      <div>
+                        <div className="text-xs text-gray-500 uppercase">30d Return</div>
+                        <div className="text-sm font-medium text-green-400">+{vault.apy.historical30d}%</div>
+                      </div>
                     </div>
 
                     {/* Right: APY + Action */}
                     <div className="flex items-center gap-6">
                       <div className="text-right">
-                        <div className="text-xs text-gray-500 uppercase">APY</div>
-                        <div className="text-2xl font-bold gradient-text">{vault.apy}%</div>
+                        <div className="text-xs text-gray-500 uppercase">Boosted APY</div>
+                        <div className="text-2xl font-bold gradient-text">{vault.apy.boosted}%</div>
+                        <div className="text-xs text-gray-500">Base: {vault.apy.base}%</div>
                       </div>
                       <button className="bg-accent hover:bg-amber-400 text-black font-semibold px-6 py-2.5 rounded-lg transition">
                         Deposit
