@@ -1,220 +1,348 @@
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { vaults, formatTVL, totalTVL, avgAPY } from '../data/vaults'
+import { useEffect, useState } from 'react'
+import { vaults, formatTVL } from '../data/vaults'
+import { useMarketData } from '../hooks/useMarketData'
+import { fetchStrategyTVL, getStrategyCount, type TotalTVL } from '../services/walletBalances'
+import { colors, fonts } from '../styles/colors'
 
 export default function Landing() {
+  const marketData = useMarketData()
+  const [tvlData, setTvlData] = useState<TotalTVL | null>(null)
+  
+  useEffect(() => {
+    fetchStrategyTVL().then(setTvlData)
+  }, [])
+  
+  const realAvgAPY = Object.values(marketData.vaults).length > 0
+    ? Object.values(marketData.vaults)
+        .filter(v => v.leverage > 0)
+        .reduce((sum, v) => sum + v.netApy, 0) / 
+      Object.values(marketData.vaults).filter(v => v.leverage > 0).length
+    : 0
+  
+  const realTVL = tvlData?.totalUsd || 0
+  const strategyCount = getStrategyCount()
+    
   return (
-    <div className="min-h-screen bg-primary">
-      {/* Navbar */}
-      <nav className="fixed top-0 w-full z-50 glass">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="text-2xl font-bold gradient-text">TORQUE</div>
-          <div className="hidden md:flex items-center gap-8 text-gray-400">
-            <a href="#about" className="hover:text-white transition">About</a>
-            <a href="#vaults" className="hover:text-white transition">Vaults</a>
-            <a href="https://docs.centrifuge.io" target="_blank" rel="noopener" className="hover:text-white transition">Docs</a>
+    <div style={{ 
+      minHeight: '100vh', 
+      backgroundColor: colors.primary, 
+      color: colors.text,
+      fontFamily: fonts.body
+    }}>
+      {/* Subtle gradient */}
+      <div style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'radial-gradient(ellipse at 50% 0%, rgba(0, 82, 255, 0.06) 0%, transparent 50%)',
+        pointerEvents: 'none'
+      }} />
+
+      {/* Nav */}
+      <nav style={{ 
+        position: 'fixed', 
+        top: 0, 
+        width: '100%', 
+        zIndex: 50,
+        padding: '20px 24px',
+        background: 'rgba(10, 10, 10, 0.8)',
+        backdropFilter: 'blur(20px)',
+        borderBottom: `1px solid ${colors.border}`
+      }}>
+        <div style={{ 
+          maxWidth: '1200px', 
+          margin: '0 auto',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between'
+        }}>
+          <span style={{ 
+            fontFamily: fonts.logo,
+            fontSize: '28px', 
+            fontWeight: 500, 
+            letterSpacing: '0.02em',
+            color: colors.text
+          }}>Torque</span>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '40px' }}>
+            <a href="#strategies" style={{ color: colors.textSecondary, textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>Strategies</a>
+            <a href="https://docs.centrifuge.io" target="_blank" rel="noopener" style={{ color: colors.textSecondary, textDecoration: 'none', fontSize: '14px', fontWeight: 500 }}>Docs</a>
+            <Link 
+              to="/app"
+              style={{
+                background: colors.accent,
+                color: colors.text,
+                fontWeight: 600,
+                padding: '10px 20px',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                fontSize: '14px'
+              }}
+            >
+              Launch App
+            </Link>
           </div>
-          <Link 
-            to="/app"
-            className="bg-accent hover:bg-amber-400 text-black font-semibold px-6 py-2.5 rounded-lg transition"
-          >
-            Open App
-          </Link>
         </div>
       </nav>
 
       {/* Hero */}
-      <section className="pt-32 pb-20 px-6">
-        <div className="max-w-7xl mx-auto text-center">
+      <section style={{ paddingTop: '160px', paddingBottom: '80px', padding: '160px 24px 80px' }}>
+        <div style={{ maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.5 }}
           >
-            <h1 className="text-6xl md:text-8xl font-bold mb-6">
-              <span className="gradient-text">TORQUE</span>
+            <h1 style={{ 
+              fontSize: 'clamp(40px, 6vw, 64px)', 
+              fontWeight: 600, 
+              lineHeight: 1.1,
+              marginBottom: '24px',
+              letterSpacing: '-0.03em'
+            }}>
+              Leveraged Yield on<br />
+              <span style={{ color: colors.accent }}>Real-World Assets</span>
             </h1>
-            <p className="text-2xl md:text-3xl text-gray-300 mb-4">
-              Force Multiplier for Yield
+            
+            <p style={{ 
+              fontSize: '18px', 
+              color: colors.textSecondary, 
+              maxWidth: '600px', 
+              margin: '0 auto 40px',
+              lineHeight: 1.6
+            }}>
+              Automated leverage strategies on Centrifuge tokenized assets. 
+              Institutional-grade execution via Aave Horizon and Morpho Blue.
             </p>
-            <p className="text-lg text-gray-500 max-w-2xl mx-auto mb-10">
-              Automated DeFi strategies for Centrifuge tokenized assets. 
-              Leverage loops on JAAA, ACRDX, JTRSY and more — powered by Morpho, Aave Horizon, and institutional-grade RWAs.
-            </p>
-            <Link 
-              to="/app"
-              className="inline-flex items-center gap-2 bg-accent hover:bg-amber-400 text-black font-semibold px-8 py-4 rounded-xl text-lg transition transform hover:scale-105"
-            >
-              Launch App
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
-            </Link>
+
+            <div style={{ display: 'flex', justifyContent: 'center', gap: '16px' }}>
+              <Link 
+                to="/app"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: colors.accent,
+                  color: colors.text,
+                  fontWeight: 600,
+                  padding: '16px 32px',
+                  borderRadius: '10px',
+                  textDecoration: 'none',
+                  fontSize: '16px'
+                }}
+              >
+                View Strategies
+              </Link>
+              <a 
+                href="https://app.rwa.xyz"
+                target="_blank"
+                rel="noopener"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  background: 'transparent',
+                  color: colors.textSecondary,
+                  fontWeight: 500,
+                  padding: '16px 32px',
+                  borderRadius: '10px',
+                  textDecoration: 'none',
+                  fontSize: '16px',
+                  border: `1px solid ${colors.border}`
+                }}
+              >
+                RWA Analytics
+              </a>
+            </div>
           </motion.div>
         </div>
       </section>
 
       {/* Stats */}
-      <section className="py-12 border-y border-white/10">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-3 gap-8 text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-            >
-              <div className="text-4xl md:text-5xl font-bold text-white mb-2">
-                {formatTVL(totalTVL)}
+      <section style={{ padding: '60px 24px', borderTop: `1px solid ${colors.border}` }}>
+        <div style={{ 
+          maxWidth: '800px', 
+          margin: '0 auto',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(3, 1fr)',
+          gap: '48px',
+          textAlign: 'center'
+        }}>
+          {[
+            { value: realTVL > 0 ? `$${(realTVL / 1000).toFixed(0)}K` : '$0', label: 'Total Value Locked' },
+            { value: strategyCount.toString(), label: 'Strategies' },
+            { value: `${realAvgAPY.toFixed(1)}%`, label: 'Avg Net APY', highlight: true }
+          ].map((stat) => (
+            <div key={stat.label}>
+              <div style={{ 
+                fontSize: '36px', 
+                fontWeight: 600, 
+                marginBottom: '8px',
+                color: stat.highlight ? colors.accent : colors.text
+              }}>
+                {stat.value}
               </div>
-              <div className="text-gray-500 uppercase tracking-wider text-sm">Total Value Locked</div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              <div className="text-4xl md:text-5xl font-bold text-white mb-2">{vaults.length}</div>
-              <div className="text-gray-500 uppercase tracking-wider text-sm">Active Strategies</div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-            >
-              <div className="text-4xl md:text-5xl font-bold gradient-text mb-2">
-                {avgAPY.toFixed(1)}%
+              <div style={{ color: colors.textMuted, fontSize: '14px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                {stat.label}
               </div>
-              <div className="text-gray-500 uppercase tracking-wider text-sm">Avg Boosted APY</div>
-            </motion.div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Strategies */}
+      <section id="strategies" style={{ padding: '80px 24px' }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <div style={{ marginBottom: '48px' }}>
+            <h2 style={{ fontSize: '32px', fontWeight: 600, marginBottom: '12px', letterSpacing: '-0.02em' }}>
+              Strategies
+            </h2>
+            <p style={{ color: colors.textSecondary, fontSize: '16px' }}>
+              Select a vault to view details and deposit
+            </p>
+          </div>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {vaults.map((vault) => {
+              const vaultData = marketData.vaults[vault.id]
+              const displayApy = vaultData?.netApy ?? vault.apy.boosted
+              const baseApy = vaultData?.baseApy ?? vault.apy.base
+              
+              return (
+                <Link
+                  key={vault.id}
+                  to={`/app/vault/${vault.id}`}
+                  style={{ textDecoration: 'none', color: 'inherit' }}
+                >
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true }}
+                    whileHover={{ backgroundColor: colors.surfaceHover }}
+                    style={{
+                      background: colors.surface,
+                      border: `1px solid ${colors.border}`,
+                      borderRadius: '12px',
+                      padding: '24px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      cursor: 'pointer',
+                      transition: 'background 0.2s'
+                    }}
+                  >
+                    {/* Left */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                      <img 
+                        src={vault.logo} 
+                        alt={vault.underlying}
+                        style={{ width: '48px', height: '48px', borderRadius: '10px' }}
+                      />
+                      <div>
+                        <div style={{ fontWeight: 600, fontSize: '16px', marginBottom: '4px' }}>{vault.name}</div>
+                        <div style={{ color: colors.textSecondary, fontSize: '14px' }}>
+                          {vault.underlying} · {vault.leverage}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Middle */}
+                    <div style={{ display: 'flex', gap: '48px' }}>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ color: colors.textMuted, fontSize: '12px', marginBottom: '4px' }}>Base APY</div>
+                        <div style={{ fontWeight: 500, fontSize: '14px' }}>{baseApy.toFixed(2)}%</div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ color: colors.textMuted, fontSize: '12px', marginBottom: '4px' }}>TVL</div>
+                        <div style={{ fontWeight: 500, fontSize: '14px' }}>{formatTVL(vault.metrics.tvl)}</div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ color: colors.textMuted, fontSize: '12px', marginBottom: '4px' }}>Risk</div>
+                        <div style={{ 
+                          fontWeight: 500, 
+                          fontSize: '14px',
+                          color: vault.risk === 'Low' ? colors.success : vault.risk === 'Medium' ? colors.warning : colors.error
+                        }}>
+                          {vault.risk}
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Right - APY */}
+                    <div style={{ textAlign: 'right', minWidth: '100px' }}>
+                      <div style={{ 
+                        fontSize: '24px', 
+                        fontWeight: 600,
+                        color: colors.accent
+                      }}>
+                        {displayApy.toFixed(2)}%
+                      </div>
+                      <div style={{ color: colors.textMuted, fontSize: '12px' }}>Net APY</div>
+                    </div>
+                  </motion.div>
+                </Link>
+              )
+            })}
           </div>
         </div>
       </section>
 
-      {/* How it Works */}
-      <section id="about" className="py-24 px-6">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">How It Works</h2>
-          <div className="grid md:grid-cols-3 gap-8">
+      {/* How it works */}
+      <section style={{ padding: '80px 24px', borderTop: `1px solid ${colors.border}` }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <h2 style={{ fontSize: '32px', fontWeight: 600, marginBottom: '48px', letterSpacing: '-0.02em' }}>
+            How it works
+          </h2>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '32px' }}>
             {[
-              { step: '01', title: 'Choose Strategy', desc: 'Select a vault based on your risk appetite. Each strategy targets different Centrifuge RWAs with optimized leverage.' },
-              { step: '02', title: 'Deposit Assets', desc: 'Deposit the underlying Centrifuge token (JAAA, ACRDX, etc). Torque handles the looping strategy automatically.' },
-              { step: '03', title: 'Earn Boosted Yield', desc: 'Your position is continuously optimized. Withdraw anytime with no lock-ups. Monitor real-time performance.' },
-            ].map((item, i) => (
-              <motion.div
-                key={item.step}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className="glass rounded-2xl p-8 text-center"
-              >
-                <div className="text-accent text-5xl font-bold mb-4">{item.step}</div>
-                <h3 className="text-xl font-semibold mb-3">{item.title}</h3>
-                <p className="text-gray-400">{item.desc}</p>
-              </motion.div>
+              { num: '01', title: 'Select Strategy', desc: 'Choose a vault based on your risk appetite and target asset class.' },
+              { num: '02', title: 'Deposit', desc: 'Deposit the underlying Centrifuge token. We handle the rest.' },
+              { num: '03', title: 'Earn', desc: 'Your position compounds automatically. Withdraw anytime.' },
+            ].map((step) => (
+              <div key={step.num}>
+                <div style={{ 
+                  color: colors.accent, 
+                  fontSize: '14px', 
+                  fontWeight: 600, 
+                  marginBottom: '16px',
+                  fontFamily: 'monospace'
+                }}>
+                  {step.num}
+                </div>
+                <h3 style={{ fontSize: '18px', fontWeight: 600, marginBottom: '8px' }}>{step.title}</h3>
+                <p style={{ color: colors.textSecondary, lineHeight: 1.6, fontSize: '14px' }}>{step.desc}</p>
+              </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Vault Preview */}
-      <section id="vaults" className="py-24 px-6 bg-surface/50">
-        <div className="max-w-7xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">Strategies</h2>
-          <p className="text-gray-500 text-center mb-12 max-w-xl mx-auto">
-            Leverage strategies for Centrifuge tokenized assets
-          </p>
-          <div className="grid md:grid-cols-2 gap-6">
-            {vaults.map((vault, i) => (
-              <motion.div
-                key={vault.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className="glass rounded-2xl p-6 hover:border-accent/50 transition group"
-              >
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent/30 to-amber-600/30 flex items-center justify-center text-lg font-bold">
-                      {vault.underlying}
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-lg">{vault.name}</h3>
-                      <p className="text-sm text-gray-500">{vault.leverage} on {vault.protocols[1]}</p>
-                    </div>
-                  </div>
-                  <span className={`text-xs px-2 py-1 rounded ${
-                    vault.risk === 'Low' ? 'bg-green-500/20 text-green-400' :
-                    vault.risk === 'Medium' ? 'bg-yellow-500/20 text-yellow-400' :
-                    'bg-red-500/20 text-red-400'
-                  }`}>
-                    {vault.risk}
-                  </span>
-                </div>
-                <p className="text-sm text-gray-400 mb-4 line-clamp-2">{vault.strategyDetail}</p>
-                
-                {/* Protocol badges */}
-                <div className="flex gap-2 mb-4">
-                  {vault.protocols.map((protocol, idx) => (
-                    <span key={protocol} className="text-xs bg-white/5 px-2 py-1 rounded flex items-center gap-1">
-                      <span>{vault.protocolLogos[idx]}</span>
-                      {protocol}
-                    </span>
-                  ))}
-                </div>
-
-                <div className="flex justify-between items-end pt-4 border-t border-white/10">
-                  <div>
-                    <div className="text-xs text-gray-500 uppercase">TVL</div>
-                    <div className="text-lg font-semibold">{formatTVL(vault.tvl)}</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-xs text-gray-500 uppercase">Boosted APY</div>
-                    <div className="text-2xl font-bold gradient-text">{vault.apy.boosted}%</div>
-                    <div className="text-xs text-gray-500">Base: {vault.apy.base}%</div>
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-          <div className="text-center mt-12">
-            <Link 
-              to="/app"
-              className="inline-flex items-center gap-2 bg-accent hover:bg-amber-400 text-black font-semibold px-8 py-3 rounded-xl transition"
-            >
-              View All Strategies
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
-              </svg>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Powered By */}
-      <section className="py-16 px-6 border-t border-white/10">
-        <div className="max-w-7xl mx-auto text-center">
-          <p className="text-gray-500 mb-8 uppercase tracking-wider text-sm">Built on</p>
-          <div className="flex flex-wrap justify-center gap-8 md:gap-16 text-2xl font-semibold text-gray-600">
-            <span className="hover:text-white transition">🔷 Centrifuge</span>
-            <span className="hover:text-white transition">🦋 Morpho</span>
-            <span className="hover:text-white transition">👻 Aave</span>
-            <span className="hover:text-white transition">⟠ Ethereum</span>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-12 px-6 border-t border-white/10">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-6">
-          <div className="text-2xl font-bold gradient-text">TORQUE</div>
-          <div className="flex gap-6 text-gray-500">
-            <a href="#" className="hover:text-white transition">Twitter</a>
-            <a href="#" className="hover:text-white transition">Discord</a>
-            <a href="https://github.com/rowanclawd-alt/torque-finance" className="hover:text-white transition">GitHub</a>
-            <a href="https://docs.centrifuge.io" className="hover:text-white transition">Docs</a>
+      <footer style={{ padding: '40px 24px', borderTop: `1px solid ${colors.border}` }}>
+        <div style={{ 
+          maxWidth: '1000px', 
+          margin: '0 auto',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <span style={{ 
+            fontFamily: fonts.logo,
+            fontSize: '20px', 
+            fontWeight: 500,
+            color: colors.text
+          }}>Torque</span>
+          
+          <div style={{ display: 'flex', gap: '32px', fontSize: '14px' }}>
+            <a href="#" style={{ color: colors.textMuted, textDecoration: 'none' }}>Twitter</a>
+            <a href="#" style={{ color: colors.textMuted, textDecoration: 'none' }}>Discord</a>
+            <a href="#" style={{ color: colors.textMuted, textDecoration: 'none' }}>GitHub</a>
           </div>
-          <div className="text-gray-600 text-sm">
-            © 2026 Torque Finance
+          
+          <div style={{ color: colors.textMuted, fontSize: '14px' }}>
+            © 2026 Torque
           </div>
         </div>
       </footer>
