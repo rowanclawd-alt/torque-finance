@@ -148,7 +148,7 @@ export default function VaultDetail() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: colors.primary, color: colors.text, fontFamily: fonts.body }}>
       {/* Background */}
-      <div style={{ position: 'fixed', inset: 0, background: 'radial-gradient(ellipse at 50% 0%, rgba(0, 82, 255, 0.04) 0%, transparent 50%)', pointerEvents: 'none' }} />
+      <div style={{ position: 'fixed', inset: 0, background: 'radial-gradient(ellipse at 50% 0%, rgba(201, 162, 39, 0.05) 0%, transparent 50%)', pointerEvents: 'none' }} />
 
       {/* Signature Modal */}
       <AnimatePresence>
@@ -207,7 +207,7 @@ export default function VaultDetail() {
       </AnimatePresence>
 
       {/* Header */}
-      <header style={{ position: 'fixed', top: 0, width: '100%', zIndex: 50, padding: '16px 24px', background: 'rgba(10, 10, 10, 0.9)', backdropFilter: 'blur(20px)', borderBottom: `1px solid ${colors.border}` }}>
+      <header style={{ position: 'fixed', top: 0, width: '100%', zIndex: 50, padding: '16px 24px', background: 'rgba(250, 250, 250, 0.9)', backdropFilter: 'blur(20px)', borderBottom: `1px solid ${colors.border}` }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Link to="/" style={{ textDecoration: 'none' }}>
             <span style={{ fontFamily: fonts.logo, fontSize: '24px', fontWeight: 500, color: colors.text }}>Torque</span>

@@ -1,39 +1,46 @@
-// Refined Dark + Coinbase Blue
-// Clean, minimal, institutional
+// Light Mode + Gold Accent
+// Clean, institutional, premium
 
 export const colors = {
-  // Backgrounds - rich blacks, not flat
-  primary: '#0a0a0a',        // Near black - main background
-  surface: '#111111',        // Slightly elevated surface
-  surfaceHover: '#1a1a1a',   // Hover state
-  elevated: '#161616',       // Cards, modals
+  // Backgrounds - clean whites
+  primary: '#fafafa',        // Light background
+  surface: '#ffffff',        // Cards, surfaces
+  surfaceHover: '#f5f5f0',   // Hover state
+  elevated: '#f5f5f0',       // Elevated elements
   
-  // Accent - Coinbase blue
-  accent: '#0052FF',         // Primary accent
-  accentHover: '#0066FF',    // Hover state
-  accentMuted: 'rgba(0, 82, 255, 0.1)', // Subtle backgrounds
-  accentBorder: 'rgba(0, 82, 255, 0.2)', // Borders with accent
+  // Accent - Centrifuge Gold
+  accent: '#c9a227',         // Primary gold
+  accentHover: '#b8922a',    // Hover state
+  accentDark: '#9a7b1a',     // Darker gold
+  accentLight: '#e8d48a',    // Lighter gold
+  accentMuted: 'rgba(201, 162, 39, 0.1)', // Subtle backgrounds
+  accentBorder: 'rgba(201, 162, 39, 0.3)', // Borders with accent
   
-  // Text - clean hierarchy
-  text: '#FFFFFF',           // Primary text
-  textSecondary: '#888888',  // Secondary text
-  textMuted: '#555555',      // Muted labels
+  // Text - dark on light
+  text: '#1a1a1a',           // Primary text
+  textSecondary: '#666666',  // Secondary text
+  textMuted: '#999999',      // Muted labels
+  textLight: '#aaaaaa',      // Very muted
   
-  // Borders - very subtle
-  border: 'rgba(255, 255, 255, 0.08)',
-  borderHover: 'rgba(255, 255, 255, 0.12)',
+  // Borders
+  border: '#e5e5e0',
+  borderHover: '#d5d5d0',
   
   // Status colors
-  success: '#00C853',
-  successMuted: 'rgba(0, 200, 83, 0.1)',
-  error: '#FF3B30',
-  errorMuted: 'rgba(255, 59, 48, 0.1)',
-  warning: '#FF9500',
-  warningMuted: 'rgba(255, 149, 0, 0.1)',
+  success: '#22c55e',
+  successMuted: 'rgba(34, 197, 94, 0.1)',
+  error: '#ef4444',
+  errorMuted: 'rgba(239, 68, 68, 0.1)',
+  warning: '#f59e0b',
+  warningMuted: 'rgba(245, 158, 11, 0.1)',
+  
+  // Dark sections (for contrast)
+  dark: '#1a1a1a',
+  darkSurface: '#252525',
 }
 
 // Typography
 export const fonts = {
   logo: '"Cormorant Garamond", Georgia, serif',
-  body: 'Inter, -apple-system, system-ui, sans-serif',
+  body: '"IBM Plex Sans", -apple-system, system-ui, sans-serif',
 }

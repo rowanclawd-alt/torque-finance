@@ -36,7 +36,7 @@ export default function AppPage() {
       <div style={{
         position: 'fixed',
         inset: 0,
-        background: 'radial-gradient(ellipse at 50% 0%, rgba(0, 82, 255, 0.04) 0%, transparent 50%)',
+        background: 'radial-gradient(ellipse at 50% 0%, rgba(201, 162, 39, 0.05) 0%, transparent 50%)',
         pointerEvents: 'none'
       }} />
 
@@ -47,7 +47,7 @@ export default function AppPage() {
         width: '100%', 
         zIndex: 50,
         padding: '16px 24px',
-        background: 'rgba(10, 10, 10, 0.9)',
+        background: 'rgba(250, 250, 250, 0.9)',
         backdropFilter: 'blur(20px)',
         borderBottom: `1px solid ${colors.border}`
       }}>
@@ -202,7 +202,7 @@ export default function AppPage() {
                       </div>
                       <button style={{
                         background: colors.accent,
-                        color: colors.text,
+                        color: '#ffffff',
                         fontWeight: 600,
                         padding: '10px 20px',
                         borderRadius: '8px',
